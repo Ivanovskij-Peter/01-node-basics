@@ -8,10 +8,9 @@ const contacts = JSON.parse(contactList);
 
 function listContacts() { 
     console.log('Contacts list');
-    console.table(contacts);
-    
+    console.table(contacts);  
     return contacts;
-}
+};
 
 function getContactById(contactId) {
         const foundContact = contacts.find(contact => {
@@ -25,7 +24,7 @@ function getContactById(contactId) {
         if (!foundContact) {
             console.log(`Contact with ID"${contactId}" is not found`);
         }
-}
+};
 
 function removeContact(contactId) {
         const newContact = contacts.find(contact => contact.id !== contactId);

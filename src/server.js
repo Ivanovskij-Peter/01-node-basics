@@ -25,7 +25,7 @@ exports.CrudServer = class {
         this.app.use(express.json());
         this.app.use(morgan('tiny'))
     }
-    initRoutes() { 
+    initRoutes() {
         this.app.use('/contacts', contactRouter);
     }
     
@@ -38,8 +38,8 @@ exports.CrudServer = class {
     startListening() {
         const { PORT } = process.env;
         this.app.listen(PORT, () => {
-            console.log('Server started listening on port :',PORT);
+            console.log('Server started listening on port :', PORT);
         })
-    }
+    };
 
-}
+};
