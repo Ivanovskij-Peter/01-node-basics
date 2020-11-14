@@ -5,3 +5,9 @@ exports.createContactSchema = Joi.object({
     email: Joi.string().email().required(),
     phone: Joi.string().required(),
 });
+
+exports.updateContactShema = Joi.object({
+    name: Joi.string(),
+    email: Joi.string().email(),
+    phone: Joi.string(),
+});
