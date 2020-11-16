@@ -17,10 +17,10 @@ exports.getContacts = async (req, res, next) => {
         next(error);
     }
 }
-exports.getContactById = (req, res, next) => {
+exports.getContactById = async (req, res, next) => {
     try {
         const { contactId } = req.params;
-        const contact = findContactById(contactId);
+        const contact = await findContactById(contactId);
         if (!contact) {
         return res.status(404).send("Contact not found");
         }
