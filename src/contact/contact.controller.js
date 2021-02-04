@@ -1,61 +1,72 @@
-const { saveContact, readContact, findContactById,removeContact,updateContactById } = require("./contact.model");
+const {
+  Types: { ObjectId },
+} = require("mongoose");
+const Contact = require("./Contact");
 
-exports.createContact = async (req, res, next) => {
-    try {
-         const contact= await saveContact(req.body);
-        return res.status(201), send(contact);
-    } catch (err) {
-        next(err); 
-    }
-};
+async function getContacts(req, res) {
+  const contacts = await Contact.find();
+  res.json(contacts);
+}
 
-exports.getContacts = async (req, res, next) => {
-    try {
-        const contacts = await readContact();
-    return res.status(200).send(contacts);
-    } catch (error) {
-        next(error);
-    }
+async function createContact(req, res) {
+  try {
+    const { body } = req;
+    const contact = await Contact.create(body);
+    res.json(contact);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 }
-exports.getContactById = async (req, res, next) => {
-    try {
-        const { contactId } = req.params;
-        const contact = await findContactById(contactId);
-        if (!contact) {
-        return res.status(404).send("Contact not found");
-        }
-        return res.status(200).send(contact);
-    } catch (error) {
-        next(error);
-    }
+async function updateContact(req, res) {
+  const {
+    params: { id },
+  } = req;
+  const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  if (!updatedContact) {
+    return res.status(400).send("Contact isn't found");
+  }
+  res.json(updatedContact);
+}
+
+async function deleteContact(req, res) {
+  const {
+    params: { id },
+  } = req;
+  const deletedContact = await Contact.findByIdAndDelete(id);
+  if (!deletedContact) {
+    return res.status(400).send("Contact isn't found");
+  }
+  res.json(deletedContact);
+}
+
+function validateId(req, res, next) {
+  const {
+    params: { id },
+  } = req;
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).send("Your id is not found");
+  }
+  next();
+}
+
+async function getContact(req, res) {
+  const {
+    params: { id },
+  } = req;
+  const contact = await Contact.findById(id);
+  if (!contact) {
+    res.status(400).send("Contact is not found");
+  }
+  res.json(contact);
+}
+
+module.exports = {
+  getContacts,
+  createContact,
+  updateContact,
+  deleteContact,
+  validateId,
+  getContact,
 };
-exports.updateContact = async (req, res, next) => {
-    try {
-        const { contactId } = req.params;
-        const { name, email, phone } = reg.body;
-        if (!(name || email || phone)) {
-            return res.status(400).send('missing fields')
-        }
-        const contact = await findContactById(contactId);
-        if (!contact) {
-             return res.status(404).send("Contact not found");
-        }
-        const updatedContact = await updateContactById(contactId, req.body);
-        return res.status(200).send(updatedContact);
-    } catch (error) {
-        next(error);
-    }
-}
-exports.deteteContact = async (req, res, next)=>{
-    try {
-        const { contactId } = req.params;
-        const contact = await findContactById(contactId);
-        if (!contact) {
-            return res.status(404).send("Contact not found");
-        }
-        removeContact(contactId);
-        return res.status(200).send('Contact deleted');
-    } catch (error) {
-        next(error);
-    }
-}
