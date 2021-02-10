@@ -27,10 +27,16 @@ function declareRouters(app) {
   app.use("/contacts", ContactRouter);
 }
 async function connectToDb() {
-  await mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  try {
+    await mongoose.connect(process.env.MONGO_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Database connection successful");
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
 }
 function listen(app) {
   app.listen(PORT, () => {
