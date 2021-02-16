@@ -1,7 +1,7 @@
 const User = require("./User");
 const bcript = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { Conflict, Unauthorized } = require("../helpers/errors");
+const { Conflict } = require("../helpers/errors");
 
 async function createUser(req, res) {
   const { email, password } = req.body;
