@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const ContactRouter = require("./src/contact/contact.router");
+const AuthRouter = require("./src/auth/auth.router");
 const UserRouter = require("./src/user/user.router");
-const UsersRouter = require("./src/users/users.router");
 
 dotenv.config();
 
@@ -26,8 +26,8 @@ function connectMiddlewares(app) {
   app.use(express.json());
 }
 function declareRouters(app) {
-  app.use("users/", UsersRouter);
-  app.use("/auth", UserRouter);
+  app.use("users/", UserRouter);
+  app.use("/auth", AuthRouter);
   app.use("/contacts", ContactRouter);
 }
 async function connectToDb() {

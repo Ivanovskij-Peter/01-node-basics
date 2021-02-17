@@ -1,9 +1,9 @@
 const { Router } = require("express");
-const UserController = require("./user.controller");
+const { asyncWrapper } = require("../helpers/async.wrapper");
+const { autorize } = require("../helpers/auth.middleware");
+const { getCurrentUser } = require("./user.controller");
+
 const router = Router();
+router.get("/current", autorize, asyncWrapper(getCurrentUser));
 
-router.post("/register", UserController.createUser);
-router.post("/login", UserController.loginUser);
-router.post("/logout", UserController.logOutUser);
-
-module.exports = router;
+exports.UserRouter = router;
