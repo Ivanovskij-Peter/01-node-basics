@@ -7,5 +7,5 @@ exports.getCurrentUser = (req, res, next) => {
 exports.updateUserAvatar = async (req, res, next) => {
   const avatarURL = `http://localhost:${process.env.PORT}/images/${req.file.filename}`;
   await User.findByIdAndUpdate(req.user._id, { avatarURL }, { new: true });
-  return res.status(204).send();
+  return res.status(200).send({ user: { avatarURL: user.avatarURL } });
 };

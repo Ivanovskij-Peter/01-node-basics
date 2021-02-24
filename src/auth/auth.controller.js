@@ -36,7 +36,7 @@ async function loginUser(req, res) {
   if (!user) {
     return res.status(401).send("Authentification is failed");
   }
-  const isPasswordValid = await bcript.compare(password, user.password);
+  const isPasswordValid = await bcript.compare(password, user.hashedPassword);
   if (!isPasswordValid) {
     return res.status(401).send("Authentification is failed");
   }
@@ -46,9 +46,9 @@ async function loginUser(req, res) {
     },
     process.env.JWT_SECRET
   );
-  await User.findByIdAndUpdate(existUser.id, { token });
+  await User.findByIdAndUpdate(existUser.id, { $push: { tokens: token } });
   res
-    .status(200)
+    .status(201)
     .send({ token, user: { email, subscription: user.subscription } });
 }
 

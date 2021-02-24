@@ -23,6 +23,6 @@ exports.avatarGenerate = () => {
   const name = Date.now();
   avatar
     .create(`${name}`)
-    .then((buffer) => fs.writeFileSync(`temp/${name}.jpg`, buffer));
-  return `${name}.jpg`;
+    .then((buffer) => fs.writeFileSync(`public/images/${name}.png`, buffer));
+  return `${name}.png`;
 };

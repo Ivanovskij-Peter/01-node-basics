@@ -1,8 +1,8 @@
 const { Router } = require("express");
-const { promises: fsPromises } = require("fs");
 const path = require("path");
 const imagemin = require("imagemin");
 const imageminJpegtran = require("imagemin-jpegtran");
+const imageminPngquant = require("imagemin-pngquant");
 const multer = require("multer");
 const { asyncWrapper } = require("../helpers/async.wrapper");
 const { autorize } = require("../helpers/auth.middleware");
@@ -13,7 +13,9 @@ const router = Router();
 const PUBLIC_FILE_PATH = "../../public/images";
 
 const storage = multer.diskStorage({
-  destination: PUBLIC_FILE_PATH,
+  destination: function (req, res, cb) {
+    cb(null, "../../temp");
+  },
   filename: (req, file, cb) => {
     const { ext } = path.parse(file.originalname);
     cb(null, `${Date.now()}${ext}`);
@@ -22,7 +24,7 @@ const storage = multer.diskStorage({
 async function minifyImage(req, res, next) {
   const files = await imagemin([req.file.path], {
     destination: PUBLIC_FILE_PATH,
-    plugins: [imageminJpegtran()],
+    plugins: [imageminJpegtran(), imageminPngquant()],
   });
   await fsPromises.unlink(req.file.path);
   next();
@@ -30,7 +32,7 @@ async function minifyImage(req, res, next) {
 const images = multer({ storage });
 
 router.get("/current", autorize, asyncWrapper(getCurrentUser));
-router.post(
+router.patch(
   "/avatars",
   autorize,
   images.single("avatar"),

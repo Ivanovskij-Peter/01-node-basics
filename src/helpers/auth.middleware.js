@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../user/User");
 const { Unauthorized } = require("./errors");
+
 exports.autorize = async (req, res, next) => {
   try {
     const authHeader = req.get("Autorization") || "";
