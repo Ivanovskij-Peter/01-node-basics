@@ -9,6 +9,7 @@ const userSchema = new Schema({
     validate: (value) => value.includes("@"),
   },
   password: String,
+  avatarURL: String,
   subscription: {
     type: String,
     required: true,
