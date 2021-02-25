@@ -9,6 +9,7 @@ exports.autorize = async (req, res, next) => {
     let value;
     try {
       value = jwt.verify(token, process.env.JWT_SECRET);
+      console.log(value);
     } catch (error) {
       throw new Unauthorized("Token is not valid");
     }
@@ -23,6 +24,6 @@ exports.autorize = async (req, res, next) => {
     req.token = token;
     next();
   } catch (error) {
-    next(error);
+    return res.status(401).send(error.message);
   }
 };

@@ -10,11 +10,11 @@ const { getCurrentUser, updateUserAvatar } = require("./user.controller");
 
 const router = Router();
 
-const PUBLIC_FILE_PATH = "../../public/images";
+const PUBLIC_FILE_PATH = "public/images";
 
 const storage = multer.diskStorage({
-  destination: function (req, res, cb) {
-    cb(null, "../../temp");
+  destination: function (req, file, cb) {
+    cb(null, "temp/");
   },
   filename: (req, file, cb) => {
     const { ext } = path.parse(file.originalname);
@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
   },
 });
 async function minifyImage(req, res, next) {
-  const files = await imagemin([req.file.path], {
+  const [file] = await imagemin([req.file.path], {
     destination: PUBLIC_FILE_PATH,
     plugins: [imageminJpegtran(), imageminPngquant()],
   });

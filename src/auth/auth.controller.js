@@ -17,9 +17,10 @@ async function createUser(req, res) {
   );
   const user = await User.create({
     email,
-    hashedPassword,
+    password: hashedPassword,
     avatarURL: `http://localhost:${process.env.PORT}/images/${avatar}`,
   });
+  console.log(user);
   res.status(201).send({
     user: {
       email,
@@ -28,6 +29,7 @@ async function createUser(req, res) {
     },
   });
 }
+
 async function loginUser(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({
@@ -36,7 +38,7 @@ async function loginUser(req, res) {
   if (!user) {
     return res.status(401).send("Authentification is failed");
   }
-  const isPasswordValid = await bcript.compare(password, user.hashedPassword);
+  const isPasswordValid = await bcript.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(401).send("Authentification is failed");
   }
@@ -46,7 +48,8 @@ async function loginUser(req, res) {
     },
     process.env.JWT_SECRET
   );
-  await User.findByIdAndUpdate(existUser.id, { $push: { tokens: token } });
+
+  await User.findByIdAndUpdate(user.id, { $push: { token: token } });
   res
     .status(201)
     .send({ token, user: { email, subscription: user.subscription } });
