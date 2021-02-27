@@ -2,6 +2,7 @@ const User = require("../user/User");
 const bcript = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { Conflict } = require("../helpers/errors");
+const { avatarGenerate } = require("../helpers/avatar-generator");
 
 async function createUser(req, res) {
   const { email, password } = req.body;
@@ -9,16 +10,26 @@ async function createUser(req, res) {
   if (existUser) {
     throw new Conflict("Email in use");
   }
+  const avatar = await avatarGenerate();
   const hashedPassword = await bcript.hash(
     password,
     Number(process.env.SALT_ROUNDS)
   );
   const user = await User.create({
     email,
-    hashedPassword,
+    password: hashedPassword,
+    avatarURL: `http://localhost:${process.env.PORT}/images/${avatar}`,
   });
-  res.status(201).send({ user: { email, subscription: user.subscription } });
+  console.log(user);
+  res.status(201).send({
+    user: {
+      email,
+      subscription: user.subscription,
+      avatarURL: user.avatarURL,
+    },
+  });
 }
+
 async function loginUser(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({
@@ -37,9 +48,10 @@ async function loginUser(req, res) {
     },
     process.env.JWT_SECRET
   );
-  await User.findByIdAndUpdate(existUser.id, { token });
+
+  await User.findByIdAndUpdate(user.id, { $push: { token: token } });
   res
-    .status(200)
+    .status(201)
     .send({ token, user: { email, subscription: user.subscription } });
 }
 

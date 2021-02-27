@@ -24,6 +24,7 @@ function initServer() {
 }
 function connectMiddlewares(app) {
   app.use(express.json());
+  app.use("/images", express.static("public/images/"));
 }
 function declareRouters(app) {
   app.use("users/", UserRouter);

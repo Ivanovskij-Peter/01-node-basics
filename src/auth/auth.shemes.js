@@ -15,3 +15,7 @@ exports.updateUserSchema = Joi.object({
 exports.validateIdSchema = Joi.object({
   contactId: Joi.objectId(),
 });
+exports.UserSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});

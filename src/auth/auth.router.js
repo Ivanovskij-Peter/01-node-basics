@@ -1,7 +1,8 @@
 const { Router } = require("express");
+
 const AuthController = require("./auth.controller");
 const { validate } = require("../helpers/validate.middleware");
-const { registerUserSchema } = require("./auth.shemes");
+const { registerUserSchema, UserSchema } = require("./auth.shemes");
 const { asyncWrapper } = require("../helpers/async.wrapper");
 const { autorize } = require("../helpers/auth.middleware");
 const router = Router();
@@ -13,9 +14,9 @@ router.post(
 );
 router.post(
   "/login",
-  validate(registerUserSchema),
+  validate(UserSchema),
   asyncWrapper(AuthController.loginUser)
 );
-router.post("/logout", autorize, asyncWrapper(AuthController.logOutUser));
+router.delete("/logout", autorize, asyncWrapper(AuthController.logOutUser));
 
 module.exports = router;
