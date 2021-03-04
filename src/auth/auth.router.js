@@ -17,6 +17,10 @@ router.post(
   validate(UserSchema),
   asyncWrapper(AuthController.loginUser)
 );
+router.get(
+  "/verify/:verificationToken",
+  asyncWrapper(AuthController.verifyEmail)
+);
 router.delete("/logout", autorize, asyncWrapper(AuthController.logOutUser));
 
 module.exports = router;
