@@ -1,8 +1,10 @@
 const User = require("../user/User");
 const bcript = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const uuid = require("uuid");
 const { Conflict } = require("../helpers/errors");
 const { avatarGenerate } = require("../helpers/avatar-generator");
+const { mail } = require("../helpers/mail");
 
 async function createUser(req, res) {
   const { email, password } = req.body;
@@ -19,8 +21,9 @@ async function createUser(req, res) {
     email,
     password: hashedPassword,
     avatarURL: `http://localhost:${process.env.PORT}/images/${avatar}`,
+    verificatinToken: uuid.v4(),
   });
-  console.log(user);
+  mail.sendEmailForVerification(user);
   res.status(201).send({
     user: {
       email,
@@ -65,8 +68,18 @@ async function logOutUser(req, res) {
   );
   res.status(204).send();
 }
+async function verifyEmail(req, res, next) {
+  const { verificatinToken } = req.params;
+  const user = await User.findOne({ verificatinToken });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+  await User.updateOne({ _id: user.id }, { verificatinToken: null });
+  res.status(200).send("Veritification was succsesful");
+}
 module.exports = {
   createUser,
   loginUser,
   logOutUser,
+  verifyEmail,
 };
